@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BomComparer", "src\BomComparer\BomComparer.csproj", "{1C00F8AD-FBFC-417F-832F-99CE4F7E1BBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI", "src\CLI\CLI.csproj", "{D3CDA07B-A852-438E-B14F-A0E161BF498F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "src\CLI\CLI.csproj", "{D3CDA07B-A852-438E-B14F-A0E161BF498F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BomComparer.Tests", "tests\BomComparer.Tests\BomComparer.Tests.csproj", "{1072AC48-929E-4B9D-8451-474D0C5FB02C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D3CDA07B-A852-438E-B14F-A0E161BF498F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3CDA07B-A852-438E-B14F-A0E161BF498F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3CDA07B-A852-438E-B14F-A0E161BF498F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1072AC48-929E-4B9D-8451-474D0C5FB02C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1072AC48-929E-4B9D-8451-474D0C5FB02C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1072AC48-929E-4B9D-8451-474D0C5FB02C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1072AC48-929E-4B9D-8451-474D0C5FB02C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
