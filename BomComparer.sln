@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BomComparer", "src\BomComparer\BomComparer.csproj", "{1C00F8AD-FBFC-417F-832F-99CE4F7E1BBD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C00F8AD-FBFC-417F-832F-99CE4F7E1BBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C00F8AD-FBFC-417F-832F-99CE4F7E1BBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C00F8AD-FBFC-417F-832F-99CE4F7E1BBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C00F8AD-FBFC-417F-832F-99CE4F7E1BBD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E220BDD1-028C-4661-813E-9320CA3413DB}
+	EndGlobalSection
+EndGlobal
