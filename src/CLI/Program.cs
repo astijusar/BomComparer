@@ -9,7 +9,9 @@ namespace CLI
         {
             const string filePath = "BOM_A.xls";
 
-            var data = ExcelReader.ReadData<BomDataRow>(filePath);
+            var excelReader = new ExcelReader();
+
+            var file = excelReader.ReadData(filePath);
 
             Console.ReadKey();
         }
