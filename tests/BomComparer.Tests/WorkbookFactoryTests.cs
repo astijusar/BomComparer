@@ -9,19 +9,12 @@ namespace BomComparer.Tests
 {
     public class WorkbookFactoryTests
     {
-        private readonly WorkbookFactory _factory;
-
-        public WorkbookFactoryTests()
-        {
-            _factory = new WorkbookFactory();
-        }
-
         [Fact]
         public void CreateWorkbook_UnsupportedFileFormat_ThrowsNotSupportedException()
         {
             var filePath = "TestData/test.txt";
 
-            Assert.Throws<NotSupportedException>(() => _factory.CreateWorkbook(filePath));
+            Assert.Throws<NotSupportedException>(() => WorkbookFactory.CreateWorkbook(filePath));
         }
 
         [Theory]
@@ -31,7 +24,7 @@ namespace BomComparer.Tests
         {
             var filePath = "TestData/test" + fileExtension;
             
-            var result = _factory.CreateWorkbook(filePath);
+            var result = WorkbookFactory.CreateWorkbook(filePath);
 
             if (fileExtension.Equals(".xls", StringComparison.OrdinalIgnoreCase))
             {

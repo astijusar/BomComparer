@@ -17,8 +17,7 @@ namespace BomComparer
         {
             var data = new List<BomDataRow>();
 
-            var workbookFactory = new WorkbookFactory();
-            var workbook = workbookFactory.CreateWorkbook(filePath);
+            var workbook = WorkbookFactory.CreateWorkbook(filePath);
 
             var sheet = workbook.GetSheetAt(0);
             var headerRow = sheet.GetRow(0);

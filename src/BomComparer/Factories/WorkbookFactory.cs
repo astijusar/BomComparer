@@ -11,7 +11,7 @@ namespace BomComparer.Factories
 {
     public class WorkbookFactory
     {
-        public IWorkbook CreateWorkbook(string filePath)
+        public static IWorkbook CreateWorkbook(string filePath)
         {
             using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             var fileExtension = Path.GetExtension(filePath);
