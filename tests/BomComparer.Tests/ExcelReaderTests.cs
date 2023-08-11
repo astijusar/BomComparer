@@ -13,15 +13,10 @@ namespace BomComparer.Tests
 {
     public class ExcelReaderTests
     {
-        private readonly ExcelReader _excelReader;
-
-        public ExcelReaderTests()
-        {
-            _excelReader = new ExcelReader();
-        }
+        private readonly ExcelReader _excelReader = new();
 
         [Fact]
-        public void ReadData_ValidFile_ReturnsData()
+        public void ReadData_ValidExcelFile_ReturnsData()
         {
             var filePath = "TestData/test.xlsx";
             var expectedResult = new BomFile
@@ -45,6 +40,31 @@ namespace BomComparer.Tests
                 }
             };
 
+
+            var result = _excelReader.ReadData(filePath);
+
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Fact]
+        public void ReadData_InvalidExcelFile_ThrowsNotSupportedException()
+        {
+            var filePath = "TestData/test.txt";
+
+            _excelReader.Invoking(e => e.ReadData(filePath))
+                .Should()
+                .Throw<NotSupportedException>();
+        }
+
+        [Fact]
+        public void ReadData_EmptyFile_ReturnsEmptyList()
+        {
+            var filePath = "TestData/test.xls";
+            var expectedResult = new BomFile
+            {
+                Name = "test.xls",
+                Data = new List<BomDataRow>()
+            };
 
             var result = _excelReader.ReadData(filePath);
 

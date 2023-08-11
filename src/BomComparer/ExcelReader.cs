@@ -25,6 +25,9 @@ namespace BomComparer
 
             var sheet = workbook.GetSheetAt(0);
             var headerRow = sheet.GetRow(0);
+
+            if (headerRow == null) return file;
+
             var headerColumns = GetHeaderColumns(headerRow);
 
             for (var i = 1; i <= sheet.LastRowNum; i++)
