@@ -1,4 +1,5 @@
 ﻿using BomComparer;
+using BomComparer.Models;
 
 namespace CLI
 {
@@ -8,7 +9,7 @@ namespace CLI
         {
             const string filePath = "BOM_A.xls";
 
-            var data = ExcelReader.ReadData(filePath);
+            var data = ExcelReader.ReadData<BomDataRow>(filePath);
 
             Console.ReadKey();
         }

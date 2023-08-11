@@ -13,9 +13,9 @@ namespace BomComparer
 {
     public class ExcelReader
     {
-        public static List<BomDataRow> ReadData(string filePath)
+        public static List<T> ReadData<T>(string filePath) where T : class, new()
         {
-            var data = new List<BomDataRow>();
+            var data = new List<T>();
 
             var workbook = WorkbookFactory.CreateWorkbook(filePath);
 
@@ -35,7 +35,7 @@ namespace BomComparer
 
                 if (dataRow == null) continue;
 
-                var bomDataRow = new BomDataRow();
+                var dataRowModel = new T();
                 var properties = typeof(BomDataRow).GetProperties();
 
                 foreach (var property in properties)
@@ -48,16 +48,16 @@ namespace BomComparer
                     var propertyType = property.PropertyType;
 
                     if (propertyType == typeof(string))
-                        property.SetValue(bomDataRow, dataRow.GetCell(columnIndex)?.StringCellValue?.Trim());
+                        property.SetValue(dataRowModel, dataRow.GetCell(columnIndex)?.StringCellValue?.Trim());
                     else if (propertyType == typeof(int))
-                        property.SetValue(bomDataRow, (int)dataRow.GetCell(columnIndex).NumericCellValue);
+                        property.SetValue(dataRowModel, (int)dataRow.GetCell(columnIndex).NumericCellValue);
                     else if (propertyType == typeof(List<string>))
-                        property.SetValue(bomDataRow, dataRow.GetCell(columnIndex).StringCellValue.Split(", ").ToList());
+                        property.SetValue(dataRowModel, dataRow.GetCell(columnIndex).StringCellValue.Split(", ").ToList());
                     else
                         throw new NotSupportedException($"Type {propertyType.Name} is not supported.");
                 }
 
-                data.Add(bomDataRow);
+                data.Add(dataRowModel);
             }
 
             return data;
