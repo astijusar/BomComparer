@@ -30,7 +30,7 @@ namespace BomComparer.Tests
                         PartNumber = "100",
                         Designators = new List<string> { "A100" },
                         Value = "value",
-                        SMD = "Yes",
+                        Smd = "Yes",
                         Description = "desc",
                         Manufacturer = "test",
                         ManufacturerPartNumber = "100",
