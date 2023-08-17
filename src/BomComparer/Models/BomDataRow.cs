@@ -7,6 +7,7 @@ namespace BomComparer.Models
         [ColumnName("Quantity")]
         public int Quantity { get; set; }
 
+        [PrimaryKey]
         [ColumnName("Part Number")]
         public string? PartNumber { get; set; }
 
@@ -33,5 +34,17 @@ namespace BomComparer.Models
 
         [ColumnName("Distributor Part Number")]
         public string? DistributorPartNumber { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            var item = obj as BomDataRow;
+
+            return item != null && PartNumber == item.PartNumber;
+        }
+
+        public override int GetHashCode()
+        {
+            return PartNumber.GetHashCode();
+        }
     }
 }

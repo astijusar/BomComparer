@@ -1,9 +1,8 @@
 ﻿namespace BomComparer.Enums
 {
-    public enum ComparisonResultStatus
+    public enum DesignatorComparisonResult
     {
         Unchanged,
-        Modified,
         Added,
         Removed
     }

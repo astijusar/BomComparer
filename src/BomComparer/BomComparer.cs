@@ -1,4 +1,6 @@
-﻿using BomComparer.Enums;
+﻿using System.Reflection;
+using BomComparer.Attributes;
+using BomComparer.Enums;
 using BomComparer.Models;
 
 namespace BomComparer
@@ -9,22 +11,27 @@ namespace BomComparer
         {
             var result = new BomComparisonResult();
 
-            foreach (var sourceEntry in sourceFile.Data)
+            var allPartNumbers = sourceFile.Data
+                .Union(targetFile.Data)
+                .Select(x => x.PartNumber)
+                .ToList();
+
+            if (!allPartNumbers.Any()) return result;
+
+            foreach (var partNumber in allPartNumbers)
             {
-                var targetEntry = targetFile.Data.Find(d => d.PartNumber == sourceEntry.PartNumber);
+                var sourceEntry = sourceFile.Data.Find(d => d.PartNumber == partNumber);
+                var targetEntry = targetFile.Data.Find(d => d.PartNumber == partNumber);
 
-                result.ResultEntries.Add(CompareRows(sourceEntry, targetEntry));
-            }
+                var comparisonResult = CompareRows(sourceEntry, targetEntry);
 
-            // To find all Added
-            foreach (var targetEntry in targetFile.Data)
-            {
-                var sourceEntry = sourceFile.Data.Find(d => d.PartNumber == targetEntry.PartNumber);
-
-                if (sourceEntry == null)
+                // TO-DO: Make it work if source or entry are null
+                if (sourceEntry != null && targetEntry != null)
                 {
-                    result.ResultEntries.Add(CompareRows(sourceEntry, targetEntry));
+                    comparisonResult.Designators = CompareDesignators(sourceEntry.Designators!, targetEntry.Designators!);
                 }
+
+                result.ResultEntries.Add(comparisonResult);
             }
 
             return result;
@@ -33,48 +40,84 @@ namespace BomComparer
         private BomComparisonResultEntry CompareRows(BomDataRow? source, BomDataRow? target)
         {
             var result = new BomComparisonResultEntry();
-            var isModified = false;
+            var isRowModified = false;
 
             var properties = typeof(BomDataRow).GetProperties();
 
             foreach (var property in properties)
             {
-                if (property.Name is "PartNumber" or "Designators") continue;
+                if (property.GetCustomAttribute<PrimaryKeyAttribute>() != null) continue;
+                if (property.Name == "Designators") continue;
 
                 var sourceValue = source != null ? property.GetValue(source) : null;
                 var targetValue = target != null ? property.GetValue(target) : null;
 
-                if (!Equals(sourceValue, targetValue)) isModified = true;
+                var comparisonResult = CompareObjects(sourceValue, targetValue);
+
+                if (comparisonResult != ComparisonResult.Unchanged) 
+                    isRowModified = true;
 
                 var comparedValuesType = typeof(ComparedValues<>).MakeGenericType(property.PropertyType);
-                var comparedValuesInstance = Activator.CreateInstance(comparedValuesType, sourceValue, targetValue);
+                var comparedValuesInstance = Activator.CreateInstance(comparedValuesType, sourceValue, targetValue, comparisonResult);
 
                 var resultEntryProperty = typeof(BomComparisonResultEntry).GetProperty(property.Name);
                 resultEntryProperty?.SetValue(result, comparedValuesInstance);
             }
 
+            if (isRowModified)
+            {
+                result.Status = ComparisonResult.Modified;
+                result.PartNumber = source!.PartNumber;
+                return result;
+            }
+
             if (source != null && target == null)
             {
-                result.Status = ComparisonResultStatus.Removed;
+                result.Status = ComparisonResult.Removed;
                 result.PartNumber = source.PartNumber;
+                return result;
             }
-            else if (source == null && target != null)
+
+            if (source == null && target != null)
             {
-                result.Status = ComparisonResultStatus.Added;
+                result.Status = ComparisonResult.Added;
                 result.PartNumber = target.PartNumber;
+                return result;
             }
-            else if (isModified)
+
+            result.Status = ComparisonResult.Unchanged;
+            result.PartNumber = source!.PartNumber;
+
+            return result;
+        }
+
+        private List<DesignatorComparisonResultEntry> CompareDesignators(List<string> source, List<string> target)
+        {
+            var result = new List<DesignatorComparisonResultEntry>();
+
+            foreach (var designator in target)
             {
-                result.Status = ComparisonResultStatus.Modified;
-                result.PartNumber = source!.PartNumber;
+                result.Add(source.Contains(designator)
+                    ? new DesignatorComparisonResultEntry(DesignatorComparisonResult.Unchanged, designator)
+                    : new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, designator));
             }
-            else
+
+            foreach (var designator in source)
             {
-                result.Status = ComparisonResultStatus.Unchanged;
-                result.PartNumber = source!.PartNumber;
+                if (!target.Contains(designator))
+                    result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, designator));
             }
 
             return result;
+        }
+
+        private ComparisonResult CompareObjects(object? source, object? target)
+        {
+            if (source == null && target != null) return ComparisonResult.Added;
+            if (source != null && target == null) return ComparisonResult.Removed;
+            if (source == null && target == null) return ComparisonResult.Unchanged;
+            if (source!.Equals(target)) return ComparisonResult.Unchanged;
+            return ComparisonResult.Modified;
         }
     }
 }
