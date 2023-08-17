@@ -1,7 +1,5 @@
 using FluentAssertions;
-using Moq;
 using NPOI.HSSF.UserModel;
-using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using WorkbookFactory = BomComparer.Factories.WorkbookFactory;
 

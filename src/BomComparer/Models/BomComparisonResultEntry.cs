@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using BomComparer.Enums;
+﻿using BomComparer.Enums;
 
 namespace BomComparer.Models;
 
