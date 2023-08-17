@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using BomComparer.Attributes;
+using BomComparer.Exceptions;
 using BomComparer.Models;
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using WorkbookFactory = BomComparer.Factories.WorkbookFactory;
 
-namespace BomComparer.ExcelReader
+namespace BomComparer.ExcelReaders
 {
     public class ExcelReader : IExcelReader
     {
@@ -26,7 +21,8 @@ namespace BomComparer.ExcelReader
             var sheet = workbook.GetSheetAt(0);
             var headerRow = sheet.GetRow(0);
 
-            if (headerRow == null) return file;
+            if (headerRow == null) 
+                throw new InvalidFileFormatException("Header needs to be on the first row.");
 
             var headerColumns = GetHeaderColumns(headerRow);
 
@@ -50,7 +46,11 @@ namespace BomComparer.ExcelReader
             for (var i = 0; i < headerRow.LastCellNum; i++)
             {
                 var cellValue = headerRow.GetCell(i)?.StringCellValue?.Trim();
-                if (cellValue != null) headerColumns[cellValue] = i;
+
+                if (cellValue == null)
+                    throw new InvalidFileFormatException($"Empty cell at index {i} in the header.");
+                    
+                headerColumns[cellValue] = i;
             }
 
             return headerColumns;
