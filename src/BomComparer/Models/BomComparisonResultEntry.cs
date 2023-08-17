@@ -10,7 +10,7 @@ public class BomComparisonResultEntry
     public string? PartNumber { get; set; }
     public ComparedValues<int>? Quantity { get; set; }
     public ComparedValues<string>? Value { get; set; }
-    public ComparedValues<string>? SMD { get; set; }
+    public ComparedValues<string>? Smd { get; set; }
     public ComparedValues<string>? Description { get; set; }
     public ComparedValues<string>? Manufacturer { get; set; }
     public ComparedValues<string>? ManufacturerPartNumber { get; set; }

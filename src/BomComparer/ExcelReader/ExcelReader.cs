@@ -10,9 +10,9 @@ using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using WorkbookFactory = BomComparer.Factories.WorkbookFactory;
 
-namespace BomComparer
+namespace BomComparer.ExcelReader
 {
-    public class ExcelReader
+    public class ExcelReader : IExcelReader
     {
         public BomFile ReadData(string filePath)
         {
@@ -75,7 +75,7 @@ namespace BomComparer
                 {
                     { } t when t == typeof(string) => cell.StringCellValue.Trim(),
                     { } t when t == typeof(int) => (int)cell.NumericCellValue,
-                    { } t when t == typeof(List<string>) => cell.StringCellValue.Split(", ").ToList(),
+                    { } t when t == typeof(List<string>) => cell.StringCellValue.Split(",", StringSplitOptions.TrimEntries).ToList(),
                     _ => throw new NotSupportedException($"Type {propertyType.Name} is not supported.")
                 };
 

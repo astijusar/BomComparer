@@ -1,4 +1,4 @@
-﻿using BomComparer;
+﻿using BomComparer.ExcelReader;
 
 namespace CLI
 {
