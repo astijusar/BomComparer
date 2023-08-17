@@ -1,4 +1,5 @@
 ﻿using BomComparer.ExcelReaders;
+using BomComparer.Exceptions;
 using BomComparer.Models;
 using FluentAssertions;
 
@@ -6,12 +7,13 @@ namespace BomComparer.Tests
 {
     public class ExcelReaderTests
     {
-        private readonly ExcelReader _excelReader = new();
+        private readonly NpoiReader _excelReader = new();
+        private const string TestFileDirectory = "TestData";
 
         [Fact]
         public void ReadData_ValidExcelFile_ReturnsData()
         {
-            var filePath = "TestData/test.xlsx";
+            var filePath = $"{TestFileDirectory}/test.xlsx";
             var expectedResult = new BomFile
             {
                 Name = "test.xlsx",
@@ -42,7 +44,7 @@ namespace BomComparer.Tests
         [Fact]
         public void ReadData_InvalidExcelFile_ThrowsNotSupportedException()
         {
-            var filePath = "TestData/test.txt";
+            var filePath = $"{TestFileDirectory}/test.txt";
 
             _excelReader.Invoking(e => e.ReadData(filePath))
                 .Should()
@@ -50,18 +52,24 @@ namespace BomComparer.Tests
         }
 
         [Fact]
-        public void ReadData_EmptyFile_ReturnsEmptyList()
+        public void ReadData_EmptyFile_ThrowsInvalidFileFormatException()
         {
-            var filePath = "TestData/test.xls";
-            var expectedResult = new BomFile
-            {
-                Name = "test.xls",
-                Data = new List<BomDataRow>()
-            };
+            var filePath = $"{TestFileDirectory}/empty.xls";
 
-            var result = _excelReader.ReadData(filePath);
+            _excelReader.Invoking(e => e.ReadData(filePath))
+                .Should()
+                .Throw<InvalidFileFormatException>();
+        }
 
-            result.Should().BeEquivalentTo(expectedResult);
+        [Fact]
+        public void ReadData_HeaderNotInFirstRow_ThrowsInvalidFileFormatException()
+        {
+            var filePath = $"{TestFileDirectory}/wrong_header_location.xlsx";
+
+            _excelReader.Invoking(e => e.ReadData(filePath))
+                .Should()
+                .Throw<InvalidFileFormatException>()
+                .WithMessage($"Header in file '{Path.GetFileName(filePath)}' needs to be on the first row.");
         }
     }
 }

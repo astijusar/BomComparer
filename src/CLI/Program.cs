@@ -9,7 +9,7 @@ namespace CLI
             const string sourceFilePath = "BOM_A.xls";
             const string targetFilePath = "BOM_B.xlsx";
 
-            var excelReader = new ExcelReader();
+            var excelReader = new NpoiReader();
 
             var sourceFile = excelReader.ReadData(sourceFilePath);
             var targetFile = excelReader.ReadData(targetFilePath);

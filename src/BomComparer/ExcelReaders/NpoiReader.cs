@@ -7,7 +7,7 @@ using WorkbookFactory = BomComparer.Factories.WorkbookFactory;
 
 namespace BomComparer.ExcelReaders
 {
-    public class ExcelReader : IExcelReader
+    public class NpoiReader : IExcelReader
     {
         public BomFile ReadData(string filePath)
         {
@@ -21,8 +21,8 @@ namespace BomComparer.ExcelReaders
             var sheet = workbook.GetSheetAt(0);
             var headerRow = sheet.GetRow(0);
 
-            if (headerRow == null) 
-                throw new InvalidFileFormatException("Header needs to be on the first row.");
+            if (headerRow == null)
+                throw new InvalidFileFormatException($"Header in file '{file.Name}' needs to be on the first row.");
 
             var headerColumns = GetHeaderColumns(headerRow);
 
@@ -48,7 +48,7 @@ namespace BomComparer.ExcelReaders
                 var cellValue = headerRow.GetCell(i)?.StringCellValue?.Trim();
 
                 if (cellValue == null)
-                    throw new InvalidFileFormatException($"Empty cell at index {i} in the header.");
+                    throw new InvalidFileFormatException($"Empty cell at index '{i}' in the header.");
                     
                 headerColumns[cellValue] = i;
             }
@@ -64,22 +64,31 @@ namespace BomComparer.ExcelReaders
             foreach (var property in properties)
             {
                 var columnNameAttribute = property.GetCustomAttribute<ColumnNameAttribute>();
-                var columnName = columnNameAttribute?.Name ?? property.Name;
 
-                if (!headerColumns.TryGetValue(columnName, out var columnIndex)) continue;
-
-                var propertyType = property.PropertyType;
-                var cell = dataRow.GetCell(columnIndex);
-
-                object value = propertyType switch
+                if (columnNameAttribute != null)
                 {
-                    { } t when t == typeof(string) => cell.StringCellValue.Trim(),
-                    { } t when t == typeof(int) => (int)cell.NumericCellValue,
-                    { } t when t == typeof(List<string>) => cell.StringCellValue.Split(",", StringSplitOptions.TrimEntries).ToList(),
-                    _ => throw new NotSupportedException($"Type {propertyType.Name} is not supported.")
-                };
+                    var columnName = columnNameAttribute.Name;
 
-                property.SetValue(rowDataModel, value);
+                    if (!headerColumns.TryGetValue(columnName, out var columnIndex)) continue;
+
+                    var propertyType = property.PropertyType;
+                    var cell = dataRow.GetCell(columnIndex);
+
+                    object value = propertyType switch
+                    {
+                        { } t when t == typeof(string) => cell.StringCellValue.Trim(),
+                        { } t when t == typeof(int) => (int)cell.NumericCellValue,
+                        { } t when t == typeof(List<string>) => cell.StringCellValue
+                            .Split(",", StringSplitOptions.TrimEntries).ToList(),
+                        _ => throw new NotSupportedException($"Type {propertyType.Name} is not supported.")
+                    };
+
+                    property.SetValue(rowDataModel, value);
+                }
+                else
+                {
+                    throw new MissingColumnNameException(property.Name);
+                }
             }
 
             return rowDataModel;

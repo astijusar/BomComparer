@@ -9,22 +9,24 @@ namespace BomComparer.Tests
 {
     public class WorkbookFactoryTests
     {
+        private const string TestFileDirectory = "TestData";
+
         [Fact]
         public void CreateWorkbook_UnsupportedFileFormat_ThrowsNotSupportedException()
         {
-            var filePath = "TestData/test.txt";
+            var filePath = $"{TestFileDirectory}/test.txt";
 
             Assert.Throws<NotSupportedException>(() => WorkbookFactory.CreateWorkbook(filePath));
         }
 
         [Theory]
-        [InlineData(".xls")]
-        [InlineData(".xlsx")]
-        public void CreateWorkbook_ValidFileFormat_ReturnsWorkbook(string fileExtension)
+        [InlineData(TestFileDirectory + "/empty.xls")]
+        [InlineData(TestFileDirectory + "/test.xlsx")]
+        public void CreateWorkbook_ValidFileFormat_ReturnsWorkbook(string filePath)
         {
-            var filePath = "TestData/test" + fileExtension;
-            
             var result = WorkbookFactory.CreateWorkbook(filePath);
+
+            var fileExtension = Path.GetExtension(filePath);
 
             if (fileExtension.Equals(".xls", StringComparison.OrdinalIgnoreCase))
             {
