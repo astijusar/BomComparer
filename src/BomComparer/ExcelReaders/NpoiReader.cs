@@ -11,6 +11,9 @@ namespace BomComparer.ExcelReaders
     {
         public BomFile ReadData(string filePath)
         {
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("File path cannot be null or empty.", nameof(filePath));
+
             var file = new BomFile
             {
                 Name = Path.GetFileName(filePath)
@@ -25,6 +28,7 @@ namespace BomComparer.ExcelReaders
                 throw new InvalidFileFormatException($"Header in file '{file.Name}' needs to be on the first row.");
 
             var headerColumns = GetHeaderColumns(headerRow);
+            var columnPropertyMap = GetColumnPropertyMap();
 
             for (var i = 1; i <= sheet.LastRowNum; i++)
             {
@@ -32,7 +36,7 @@ namespace BomComparer.ExcelReaders
 
                 if (dataRow == null) continue;
 
-                var rowDataModel = GetRowData(dataRow, headerColumns);
+                var rowDataModel = GetRowData(dataRow, headerColumns, columnPropertyMap);
                 file.Data.Add(rowDataModel);
             }
 
@@ -56,39 +60,47 @@ namespace BomComparer.ExcelReaders
             return headerColumns;
         }
 
-        private BomDataRow GetRowData(IRow dataRow, Dictionary<string, int> headerColumns)
+        private Dictionary<string, PropertyInfo> GetColumnPropertyMap()
         {
-            var rowDataModel = new BomDataRow();
+            var columnPropertyMap = new Dictionary<string, PropertyInfo>(StringComparer.OrdinalIgnoreCase);
             var properties = typeof(BomDataRow).GetProperties();
 
             foreach (var property in properties)
             {
                 var columnNameAttribute = property.GetCustomAttribute<ColumnNameAttribute>();
 
-                if (columnNameAttribute != null)
-                {
-                    var columnName = columnNameAttribute.Name;
-
-                    if (!headerColumns.TryGetValue(columnName, out var columnIndex)) continue;
-
-                    var propertyType = property.PropertyType;
-                    var cell = dataRow.GetCell(columnIndex);
-
-                    object value = propertyType switch
-                    {
-                        { } t when t == typeof(string) => cell.StringCellValue.Trim(),
-                        { } t when t == typeof(int) => (int)cell.NumericCellValue,
-                        { } t when t == typeof(List<string>) => cell.StringCellValue
-                            .Split(",", StringSplitOptions.TrimEntries).ToList(),
-                        _ => throw new NotSupportedException($"Type {propertyType.Name} is not supported.")
-                    };
-
-                    property.SetValue(rowDataModel, value);
-                }
-                else
-                {
+                if (columnNameAttribute == null) 
                     throw new MissingColumnNameException(property.Name);
-                }
+
+                var columnName = columnNameAttribute.Name;
+                columnPropertyMap[columnName] = property;
+            }
+
+            return columnPropertyMap;
+        }
+
+        private BomDataRow GetRowData(IRow dataRow, Dictionary<string, int> headerColumns,
+            Dictionary<string, PropertyInfo> columnPropertyMap)
+        {
+            var rowDataModel = new BomDataRow();
+
+            foreach (var (columnName, columnIndex) in headerColumns)
+            {
+                if (!columnPropertyMap.TryGetValue(columnName, out var property)) continue;
+
+                var propertyType = property.PropertyType;
+                var cell = dataRow.GetCell(columnIndex);
+
+                object value = propertyType switch
+                {
+                    { } t when t == typeof(string) => cell.StringCellValue.Trim(),
+                    { } t when t == typeof(int) => (int)cell.NumericCellValue,
+                    { } t when t == typeof(List<string>) => cell.StringCellValue
+                        .Split(",", StringSplitOptions.TrimEntries).ToList(),
+                    _ => throw new NotSupportedException($"Type {propertyType.Name} is not supported.")
+                };
+
+                property.SetValue(rowDataModel, value);
             }
 
             return rowDataModel;
