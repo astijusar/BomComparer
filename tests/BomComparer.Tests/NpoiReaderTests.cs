@@ -1,11 +1,13 @@
-﻿using BomComparer.ExcelReaders;
+﻿using System.Reflection;
+using BomComparer.Attributes;
+using BomComparer.ExcelReaders;
 using BomComparer.Exceptions;
 using BomComparer.Models;
 using FluentAssertions;
 
 namespace BomComparer.Tests
 {
-    public class ExcelReaderTests
+    public class NpoiReaderTests
     {
         private readonly NpoiReader _excelReader = new();
         private const string TestFileDirectory = "TestData";
@@ -70,6 +72,40 @@ namespace BomComparer.Tests
                 .Should()
                 .Throw<InvalidFileFormatException>()
                 .WithMessage($"Header in file '{Path.GetFileName(filePath)}' needs to be on the first row.");
+        }
+
+        [Fact]
+        public void ReadData_EmptyHeaderCell_ThrowsInvalidFileFormatException()
+        {
+            var filePath = $"{TestFileDirectory}/empty_header_cell.xlsx";
+
+            _excelReader.Invoking(e => e.ReadData(filePath))
+                .Should()
+                .Throw<InvalidFileFormatException>()
+                .WithMessage("Empty cell at index '2' in the header.");
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("   ")]
+        public void ReadData_FilePathIsNullOrWhitespace_ThrowsArgumentException(string filePath)
+        {
+            _excelReader.Invoking(e => e.ReadData(filePath))
+                .Should()
+                .Throw<ArgumentException>();
+        }
+
+        [Fact]
+        public void BomDataRow_AllPropertiesShouldHaveColumnNameAttribute()
+        {
+            var properties = typeof(BomDataRow).GetProperties();
+
+            foreach (var property in properties)
+            {
+                var columnNameAttribute = property.GetCustomAttribute<ColumnNameAttribute>();
+
+                columnNameAttribute.Should().NotBeNull();
+            }
         }
     }
 }
