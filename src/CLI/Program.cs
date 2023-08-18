@@ -1,4 +1,5 @@
 ﻿using BomComparer.ExcelReaders;
+using BomWriter.ExcelWriter;
 
 namespace CLI
 {
@@ -17,7 +18,12 @@ namespace CLI
             var comparer = new BomComparer.BomComparer();
             var results = comparer.Compare(sourceFile, targetFile);
 
-            Console.ReadKey();
+            var path = $"{sourceFilePath} vs {targetFilePath}";
+
+            var writer = new NpoiWriter();
+            writer.Write(path, results);
+
+            //Console.ReadKey();
         }
     }
 }
