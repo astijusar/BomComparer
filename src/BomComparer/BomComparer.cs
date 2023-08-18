@@ -24,7 +24,6 @@ namespace BomComparer
                 var targetEntry = targetFile.Data.Find(d => d.PartNumber == partNumber);
 
                 var comparisonResult = CompareRows(sourceEntry, targetEntry);
-                comparisonResult.Designators = CompareDesignators(sourceEntry?.Designators, targetEntry?.Designators);
 
                 result.ResultEntries.Add(comparisonResult);
             }
@@ -59,70 +58,42 @@ namespace BomComparer
                 resultEntryProperty?.SetValue(result, comparedValuesInstance);
             }
 
-            if (source != null && target == null)
-            {
-                result.Status = ComparisonResult.Removed;
-                result.PartNumber = source.PartNumber;
-                return result;
-            }
+            result.Designators = CompareDesignators(source?.Designators, target?.Designators);
 
-            if (source == null && target != null)
+            (result.Status, result.PartNumber) = (source, target) switch
             {
-                result.Status = ComparisonResult.Added;
-                result.PartNumber = target.PartNumber;
-                return result;
-            }
-
-            if (isRowModified)
-            {
-                result.Status = ComparisonResult.Modified;
-                result.PartNumber = source!.PartNumber;
-                return result;
-            }
-
-            result.Status = ComparisonResult.Unchanged;
-            result.PartNumber = source!.PartNumber;
+                (not null, null) => (ComparisonResult.Removed, source!.PartNumber),
+                (null, not null) => (ComparisonResult.Added, target.PartNumber),
+                _ => (isRowModified ? ComparisonResult.Modified : ComparisonResult.Unchanged, source!.PartNumber)
+            };
 
             return result;
         }
 
         private List<DesignatorComparisonResultEntry> CompareDesignators(List<string>? source, List<string>? target)
         {
-            var result = new List<DesignatorComparisonResultEntry>();
-
             if (source == null && target == null)
-                return result;
+                return new List<DesignatorComparisonResultEntry>();
 
-            if (source == null && target != null)
-            {
-                result.AddRange(target
-                    .Select(designator => 
-                        new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, designator)));
+            if (source == null)
+                return target!.Select(designator => 
+                    new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, designator))
+                    .ToList();
 
-                return result;
-            }
+            if (target == null)
+                return source!.Select(designator => 
+                    new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, designator))
+                    .ToList();
 
-            if (source != null && target == null)
-            {
-                result.AddRange(source
-                    .Select(designator =>
-                        new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, designator)));
-
-                return result;
-            }
-
-            foreach (var designator in target!)
-            {
-                result.Add(source!.Contains(designator)
+            var result = target
+                .Select(designator => source.Contains(designator)
                     ? new DesignatorComparisonResultEntry(DesignatorComparisonResult.Unchanged, designator)
-                    : new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, designator));
-            }
+                    : new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, designator))
+                .ToList();
 
-            foreach (var designator in source!)
-            {
-                if (!target.Contains(designator))
-                    result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, designator));
-            }
+            result.AddRange(source
+                .Where(designator => !target.Contains(designator))
+                .Select(designator => new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, designator)));
 
             return result;
         }
