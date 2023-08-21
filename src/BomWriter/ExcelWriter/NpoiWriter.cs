@@ -12,12 +12,14 @@ namespace BomWriter.ExcelWriter
 {
     public class NpoiWriter : IExcelWriter
     {
-        private XSSFWorkbook? _workbook;
+        private CellStyleProvider? _cellStyleProvider;
 
         public void Write(string path, BomComparisonResult data)
         {
-            _workbook = new XSSFWorkbook();
-            var sheet = _workbook.CreateSheet("Sheet1");
+            var workbook = new XSSFWorkbook();
+            _cellStyleProvider = new CellStyleProvider(workbook);
+
+            var sheet = workbook.CreateSheet("Sheet1");
 
             var properties = typeof(BomComparisonResultEntry).GetProperties()
                 .Select(prop => new
@@ -31,10 +33,8 @@ namespace BomWriter.ExcelWriter
 
             CreateHeader(sheet, properties);
 
-            for (var i = 1; i <= data.ResultEntries.Count; i++)
+            foreach (var rowData in data.ResultEntries)
             {
-                var rowData = data.ResultEntries[i - 1];
-
                 if (rowData.Status == ComparisonResult.Modified)
                     CreateModifiedBomRows(sheet, rowData, data.SourceFileName, data.TargetFileName, properties);
                 else
@@ -45,13 +45,13 @@ namespace BomWriter.ExcelWriter
                 sheet.AutoSizeColumn(i + 1);
 
             using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
-            _workbook.Write(fileStream);
+            workbook.Write(fileStream);
         }
 
         private void CreateHeader(ISheet sheet, List<PropertyInfo> properties)
         {
             var headerRow = sheet.CreateRow(0);
-            var cellStyle = CellStyleProvider.HeaderCellStyle(sheet.Workbook);
+            var cellStyle = _cellStyleProvider!.GetHeaderCellStyle();
 
             var dataSourceCell = headerRow.CreateCell(0);
             dataSourceCell.SetCellValue("Data Source");
@@ -92,38 +92,12 @@ namespace BomWriter.ExcelWriter
                     case ComparedValues<int> intCompVal:
                         sourceCell.SetCellValue(intCompVal.SourceValue);
                         targetCell.SetCellValue(intCompVal.TargetValue);
-
-                        switch (intCompVal.Status)
-                        {
-                            case ComparisonResult.Added:
-                                targetCell.CellStyle = CellStyleProvider.AddedCellStyle(sheet.Workbook);
-                                break;
-                            case ComparisonResult.Removed:
-                                sourceCell.CellStyle = CellStyleProvider.RemovedCellStyle(sheet.Workbook);
-                                break;
-                            case ComparisonResult.Modified:
-                                targetCell.CellStyle = CellStyleProvider.AddedCellStyle(sheet.Workbook);
-                                sourceCell.CellStyle = CellStyleProvider.RemovedCellStyle(sheet.Workbook);
-                                break;
-                        }
+                        SetCellStyle(sourceCell, targetCell, intCompVal.Status);
                         break;
                     case ComparedValues<string> strCompVal:
                         sourceCell.SetCellValue(strCompVal.SourceValue);
                         targetCell.SetCellValue(strCompVal.TargetValue);
-
-                        switch (strCompVal.Status)
-                        {
-                            case ComparisonResult.Added:
-                                targetCell.CellStyle = CellStyleProvider.AddedCellStyle(sheet.Workbook);
-                                break;
-                            case ComparisonResult.Removed:
-                                sourceCell.CellStyle = CellStyleProvider.RemovedCellStyle(sheet.Workbook);
-                                break;
-                            case ComparisonResult.Modified:
-                                targetCell.CellStyle = CellStyleProvider.AddedCellStyle(sheet.Workbook);
-                                sourceCell.CellStyle = CellStyleProvider.RemovedCellStyle(sheet.Workbook);
-                                break;
-                        }
+                        SetCellStyle(sourceCell, targetCell, strCompVal.Status);
                         break;
                     case ComparisonResult status:
                         sourceCell.SetCellValue(status.ToString());
@@ -134,9 +108,9 @@ namespace BomWriter.ExcelWriter
                         targetCell.SetCellValue(str);
                         break;
                     case List<DesignatorComparisonResultEntry> list:
-                        var designatorString = ConstructDesignatorString(sheet.Workbook, list);
-                        sourceCell.SetCellValue(designatorString.Item1);
-                        targetCell.SetCellValue(designatorString.Item2);
+                        var designatorStrings = ConstructDesignatorStrings(sheet.Workbook, list);
+                        sourceCell.SetCellValue(designatorStrings.Item1);
+                        targetCell.SetCellValue(designatorStrings.Item2);
                         break;
                 }
             }
@@ -147,9 +121,9 @@ namespace BomWriter.ExcelWriter
         {
             var cellStyle = compResult switch
             {
-                ComparisonResult.Added => CellStyleProvider.AddedCellStyle(sheet.Workbook),
-                ComparisonResult.Removed => CellStyleProvider.RemovedCellStyle(sheet.Workbook),
-                _ => CellStyleProvider.DefaultCellStyle(sheet.Workbook)
+                ComparisonResult.Added => _cellStyleProvider!.GetAddedCellStyle(),
+                ComparisonResult.Removed => _cellStyleProvider!.GetRemovedCellStyle(),
+                _ => _cellStyleProvider!.GetDefaultCellStyle()
             };
 
             var row = sheet.CreateRow(sheet.LastRowNum + 1);
@@ -189,14 +163,33 @@ namespace BomWriter.ExcelWriter
             }
         }
 
-        private (XSSFRichTextString, XSSFRichTextString) ConstructDesignatorString(IWorkbook workbook, 
+        private void SetCellStyle(ICell source, ICell target, ComparisonResult comparisonResult)
+        {
+            switch (comparisonResult)
+            {
+                case ComparisonResult.Added:
+                    target.CellStyle = _cellStyleProvider!.GetAddedCellStyle();
+                    break;
+                case ComparisonResult.Removed:
+                    source.CellStyle = _cellStyleProvider!.GetRemovedCellStyle();
+                    break;
+                case ComparisonResult.Modified:
+                    target.CellStyle = _cellStyleProvider!.GetAddedCellStyle();
+                    source.CellStyle = _cellStyleProvider!.GetRemovedCellStyle();
+                    break;
+            }
+        }
+
+        private (XSSFRichTextString, XSSFRichTextString) ConstructDesignatorStrings(IWorkbook workbook, 
             List<DesignatorComparisonResultEntry> designators)
         {
+            var fontStyleProvider = new FontStyleProvider(workbook);
+
             var source = new XSSFRichTextString();
             var target = new XSSFRichTextString();
 
-            var addedFont = (XSSFFont)FontStyleProvider.AddedFontStyle(workbook);
-            var removedFont = (XSSFFont)FontStyleProvider.RemovedFontStyle(workbook);
+            var addedFont = (XSSFFont)fontStyleProvider.GetAddedFontStyle();
+            var removedFont = (XSSFFont)fontStyleProvider.GetRemovedFontStyle();
 
             foreach (var designator in designators)
             {

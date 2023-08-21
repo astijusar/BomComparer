@@ -7,25 +7,30 @@ using NPOI.SS.UserModel;
 
 namespace BomWriter.Styles
 {
-    public static class FontStyleProvider
+    public class FontStyleProvider
     {
-        public static IFont AddedFontStyle(IWorkbook workbook)
+        private readonly IWorkbook _workbook;
+        private IFont? _addedFontStyle;
+        private IFont? _removedFontStyle;
+
+        public FontStyleProvider(IWorkbook workbook)
         {
-            var font = workbook.CreateFont();
-
-            font.Color = IndexedColors.Green.Index;
-            font.IsBold = true;
-
-            return font;
+            _workbook = workbook;
         }
 
-        public static IFont RemovedFontStyle(IWorkbook workbook)
-        {
-            var font = workbook.CreateFont();
+        public IFont GetAddedFontStyle() =>
+            _addedFontStyle ??= CreateFontStyle(IndexedColors.Green.Index, false, true);
 
-            font.Color = IndexedColors.Red.Index;
-            font.IsBold = true;
-            font.IsStrikeout = true;
+        public IFont GetRemovedFontStyle() =>
+            _removedFontStyle ??= CreateFontStyle(IndexedColors.Red.Index, true, true);
+
+        private IFont CreateFontStyle(short fontColor, bool isStrikeout, bool isBold)
+        {
+            var font = _workbook.CreateFont();
+
+            font.Color = fontColor;
+            font.IsStrikeout = isStrikeout;
+            font.IsBold = isBold;
 
             return font;
         }

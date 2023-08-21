@@ -1,49 +1,51 @@
-﻿using NPOI.SS.UserModel;
+﻿using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 
 namespace BomWriter.Styles
 {
-    public static class CellStyleProvider
+    public class CellStyleProvider
     {
-        public static ICellStyle AddedCellStyle(IWorkbook workbook)
-        {
-            var cellStyle = workbook.CreateCellStyle();
-            var font = workbook.CreateFont();
+        private readonly IWorkbook _workbook;
+        private ICellStyle? _addedCellStyle;
+        private ICellStyle? _removedCellStyle;
+        private ICellStyle? _defaultCellStyle;
+        private ICellStyle? _headerCellStyle;
 
-            font.Color = IndexedColors.Green.Index;
+        public CellStyleProvider(IWorkbook workbook)
+        {
+            _workbook = workbook;
+        }
+
+        public ICellStyle GetAddedCellStyle() =>
+            _addedCellStyle ??= CreateCellStyle(IndexedColors.Green.Index, false, false);
+
+        public ICellStyle GetRemovedCellStyle() => 
+            _removedCellStyle ??= CreateCellStyle(IndexedColors.Red.Index, true, false);
+
+        public ICellStyle GetDefaultCellStyle() => 
+            _defaultCellStyle ??= CreateCellStyle(IndexedColors.Black.Index, false, false);
+
+        public ICellStyle GetHeaderCellStyle() => 
+            _headerCellStyle ??= CreateHeaderCellStyle();
+
+        private ICellStyle CreateCellStyle(short fontColor, bool isStrikeout, bool isBold)
+        {
+            var cellStyle = _workbook.CreateCellStyle();
+            var font = _workbook.CreateFont();
+
+            font.Color = fontColor;
+            font.IsStrikeout = isStrikeout;
+            font.IsBold = isBold;
             cellStyle.SetFont(font);
 
             return cellStyle;
         }
 
-        public static ICellStyle RemovedCellStyle(IWorkbook workbook)
+        private ICellStyle CreateHeaderCellStyle()
         {
-            var cellStyle = workbook.CreateCellStyle();
-            var font = workbook.CreateFont();
-
-            font.Color = IndexedColors.Red.Index;
-            font.IsStrikeout = true;
-            cellStyle.SetFont(font);
-
-            return cellStyle;
-        }
-
-        public static ICellStyle DefaultCellStyle(IWorkbook workbook)
-        {
-            var cellStyle = workbook.CreateCellStyle();
-            var font = workbook.CreateFont();
-
-            font.Color = IndexedColors.Black.Index;
-            font.IsStrikeout = false;
-            font.IsBold = false;
-            cellStyle.SetFont(font);
-
-            return cellStyle;
-        }
-
-        public static ICellStyle HeaderCellStyle(IWorkbook workbook)
-        {
-            var cellStyle = workbook.CreateCellStyle();
-            var font = workbook.CreateFont();
+            var cellStyle = _workbook.CreateCellStyle();
+            var font = _workbook.CreateFont();
 
             font.IsBold = true;
             cellStyle.SetFont(font);

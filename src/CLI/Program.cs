@@ -1,5 +1,6 @@
 ﻿using BomComparer.ExcelReaders;
 using BomWriter.ExcelWriter;
+using BomWriter.Styles;
 
 namespace CLI
 {
