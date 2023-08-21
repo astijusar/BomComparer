@@ -9,7 +9,11 @@ namespace BomComparer
     {
         public BomComparisonResult Compare(BomFile sourceFile, BomFile targetFile)
         {
-            var result = new BomComparisonResult();
+            var result = new BomComparisonResult
+            {
+                SourceFileName = sourceFile.Name,
+                TargetFileName = targetFile.Name
+            };
 
             var allPartNumbers = sourceFile.Data
                 .Union(targetFile.Data)
