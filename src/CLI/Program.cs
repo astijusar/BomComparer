@@ -18,7 +18,7 @@ namespace CLI
             var comparer = new BomComparer.BomComparer();
             var results = comparer.Compare(sourceFile, targetFile);
 
-            var path = $"{sourceFilePath} vs {targetFilePath}";
+            var path = $"{sourceFilePath} vs {targetFilePath}.xlsx";
 
             var writer = new NpoiWriter();
             writer.Write(path, results);
