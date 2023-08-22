@@ -1,0 +1,51 @@
+﻿<Window x:Class="WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"
+        Title="BOM Comparer" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="80"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Content="BOM Comparer" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="36"></Label>
+
+        <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="10, 0">
+            <Button Name="SelectSourceFileButton" Content="Select Source File" HorizontalAlignment="Stretch" Height="30" Click="SelectFile_Click"></Button>
+            <TextBox Name="SourceFilePathTextBox" HorizontalAlignment="Stretch" Height="30" Margin="0, 5" IsReadOnly="True"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Margin="10, 0">
+            <Button Name="SelectTargetFileButton" Content="Select Target File" HorizontalAlignment="Stretch" Height="30" Click="SelectFile_Click"></Button>
+            <TextBox Name="TargetFilePathTextBox" HorizontalAlignment="Stretch" Height="30" Margin="0, 5" IsReadOnly="True"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="10, 0">
+            <Button Name="SelectOutputFileButton" Content="Select Output Path" HorizontalAlignment="Stretch" Height="30" Click="SelectPath_Click"></Button>
+            <TextBox Name="OutputFilePathTextBox" HorizontalAlignment="Stretch" Height="30" Margin="0, 5" IsReadOnly="True"/>
+        </StackPanel>
+
+        <TextBlock Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" Name="ErrorLabel" HorizontalAlignment="Center" Visibility="Collapsed" Foreground="Red" FontWeight="Bold" TextWrapping="WrapWithOverflow"></TextBlock>
+
+        <fa:ImageAwesome Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Name="Spinner" Height="50" Icon="CircleOutlineNotch" Spin="True" Visibility="Collapsed"></fa:ImageAwesome>
+
+        <Button Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Name="CompareButton" Content="Compare" Height="50" Click="CompareFiles_Click"></Button>
+
+    </Grid>
+</Window>
