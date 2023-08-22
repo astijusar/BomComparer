@@ -6,25 +6,6 @@ namespace CLI
     {
         private static readonly string[] AllowedFileExtensions = new[] { ".xls", ".xlsx" };
 
-        /*public static string GetFilePath(string label)
-        {
-            var error = false;
-
-            while (true)
-            {
-                AnsiConsole.Clear();
-
-                if (error)
-                    AnsiConsole.Markup("[red]File with given path does not exist! Please try again.[/] \n");
-
-                var filePath = AnsiConsole.Ask<string>(label);
-
-                if (File.Exists(filePath)) return filePath;
-
-                error = true;
-            }
-        }*/
-
         public static string GetFilePath(string label)
         {
             AnsiConsole.Clear();
