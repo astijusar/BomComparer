@@ -93,15 +93,20 @@ namespace WPF
                 });
 
                 var writer = new NpoiWriter();
-                var outputPath = Path.Combine(baseOutputPath, $"{Path.GetFileName(sourcePath)}_vs_{Path.GetFileName(targetPath)}.xlsx");
+                var outputPath = Path.Combine(baseOutputPath,
+                    $"{Path.GetFileName(sourcePath)}_vs_{Path.GetFileName(targetPath)}.xlsx");
 
-                await Task.Run(() =>
-                {
-                    writer.Write(outputPath, results);
-                });
+                await Task.Run(() => { writer.Write(outputPath, results); });
 
                 Spinner.Visibility = Visibility.Collapsed;
+
                 MessageBox.Show("Done!");
+            }
+            catch (IOException ex)
+            {
+                Spinner.Visibility = Visibility.Collapsed;
+                ErrorLabel.Text = "Comparison failed! Check if the source, target or result files are closed.";
+                ErrorLabel.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
 using BomComparer.Attributes;
 using BomComparer.Enums;
 using BomComparer.Exceptions;
