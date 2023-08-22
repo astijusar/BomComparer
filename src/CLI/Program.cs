@@ -1,30 +1,31 @@
-﻿using BomComparer.ExcelReaders;
+﻿using BomComparer.Comparer;
+using BomComparer.ExcelReaders;
 using BomWriter.ExcelWriter;
-using BomWriter.Styles;
+using Spectre.Console;
+using Spectre.Console.Cli;
 
 namespace CLI
 {
     public class Program
     {
-        static void Main()
+        static int Main(string[] args)
         {
-            const string sourceFilePath = "BOM_A.xls";
-            const string targetFilePath = "BOM_B.xlsx";
+            var app = new CommandApp<BomComparisonCommand>();
+            app.Configure(config =>
+            {
+                config.PropagateExceptions();
+            });
 
-            var excelReader = new NpoiReader();
-
-            var sourceFile = excelReader.ReadData(sourceFilePath);
-            var targetFile = excelReader.ReadData(targetFilePath);
-
-            var comparer = new BomComparer.BomComparer();
-            var results = comparer.Compare(sourceFile, targetFile);
-
-            var path = $"{sourceFilePath} vs {targetFilePath}.xlsx";
-
-            var writer = new NpoiWriter();
-            writer.Write(path, results);
-
-            //Console.ReadKey();
+            try
+            {
+                return app.Run(args);
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.WriteLine(ex.Message);
+                return -1;
+            }
         }
     }
 }

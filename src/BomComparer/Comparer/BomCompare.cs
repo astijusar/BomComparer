@@ -3,9 +3,9 @@ using BomComparer.Attributes;
 using BomComparer.Enums;
 using BomComparer.Models;
 
-namespace BomComparer
+namespace BomComparer.Comparer
 {
-    public class BomComparer
+    public class BomCompare
     {
         public BomComparisonResult Compare(BomFile sourceFile, BomFile targetFile)
         {
@@ -52,7 +52,7 @@ namespace BomComparer
 
                 var comparisonResult = CompareObjects(sourceValue, targetValue);
 
-                if (comparisonResult != ComparisonResult.Unchanged) 
+                if (comparisonResult != ComparisonResult.Unchanged)
                     isRowModified = true;
 
                 var comparedValuesType = typeof(ComparedValues<>).MakeGenericType(property.PropertyType);
@@ -80,12 +80,12 @@ namespace BomComparer
                 return new List<DesignatorComparisonResultEntry>();
 
             if (source == null)
-                return target!.Select(designator => 
+                return target!.Select(designator =>
                     new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, designator))
                     .ToList();
 
             if (target == null)
-                return source!.Select(designator => 
+                return source!.Select(designator =>
                     new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, designator))
                     .ToList();
 
