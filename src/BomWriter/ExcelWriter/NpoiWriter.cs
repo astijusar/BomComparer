@@ -92,12 +92,12 @@ namespace BomWriter.ExcelWriter
                     case ComparedValues<int> intCompVal:
                         sourceCell.SetCellValue(intCompVal.SourceValue);
                         targetCell.SetCellValue(intCompVal.TargetValue);
-                        SetCellStyle(sourceCell, targetCell, intCompVal.Status);
+                        SetModifiedRowCellStyle(sourceCell, targetCell, intCompVal.Status);
                         break;
                     case ComparedValues<string> strCompVal:
                         sourceCell.SetCellValue(strCompVal.SourceValue);
                         targetCell.SetCellValue(strCompVal.TargetValue);
-                        SetCellStyle(sourceCell, targetCell, strCompVal.Status);
+                        SetModifiedRowCellStyle(sourceCell, targetCell, strCompVal.Status);
                         break;
                     case ComparisonResult status:
                         sourceCell.SetCellValue(status.ToString());
@@ -163,7 +163,7 @@ namespace BomWriter.ExcelWriter
             }
         }
 
-        private void SetCellStyle(ICell source, ICell target, ComparisonResult comparisonResult)
+        private void SetModifiedRowCellStyle(ICell source, ICell target, ComparisonResult comparisonResult)
         {
             switch (comparisonResult)
             {
