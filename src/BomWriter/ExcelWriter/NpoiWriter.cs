@@ -129,6 +129,7 @@ namespace BomWriter.ExcelWriter
             var row = sheet.CreateRow(sheet.LastRowNum + 1);
 
             var dataSourceCell = row.CreateCell(0);
+            dataSourceCell.SetCellValue(compResult == ComparisonResult.Removed ? sourceName : targetName);
             dataSourceCell.CellStyle = cellStyle;
 
             for (var i = 0; i < properties.Count; i++)
@@ -151,13 +152,15 @@ namespace BomWriter.ExcelWriter
                         break;
                     case ComparisonResult status:
                         cell.SetCellValue(status.ToString());
-                        dataSourceCell.SetCellValue(status == ComparisonResult.Removed ? sourceName : targetName);
                         break;
                     case string str:
                         cell.SetCellValue(str);
                         break;
                     case List<DesignatorComparisonResultEntry> list:
-                        cell.SetCellValue(string.Join(", ", list.Select(l => l.Value)));
+                        var designatorStrings = ConstructDesignatorStrings(sheet.Workbook, list);
+                        cell.SetCellValue(compResult == ComparisonResult.Removed
+                            ? designatorStrings.Item1 
+                            : designatorStrings.Item2);
                         break;
                 }
             }
@@ -196,7 +199,7 @@ namespace BomWriter.ExcelWriter
                 switch (designator.Status)
                 {
                     case DesignatorComparisonResult.Added:
-                        source.Append(
+                        target.Append(
                             designator != designators.Last() ? $"{designator.Value}, " : $"{designator.Value}",
                             addedFont);
                         break;
