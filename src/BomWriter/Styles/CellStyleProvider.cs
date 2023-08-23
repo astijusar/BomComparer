@@ -11,6 +11,8 @@ namespace BomWriter.Styles
         private ICellStyle? _removedCellStyle;
         private ICellStyle? _defaultCellStyle;
         private ICellStyle? _headerCellStyle;
+        private ICellStyle? _modifiedRemovedCellStyle;
+        private ICellStyle? _modifiedAddedCellStyle;
 
         public CellStyleProvider(IWorkbook workbook)
         {
@@ -25,6 +27,12 @@ namespace BomWriter.Styles
 
         public ICellStyle GetDefaultCellStyle() => 
             _defaultCellStyle ??= CreateCellStyle(IndexedColors.Black.Index, false, false);
+
+        public ICellStyle GetModifiedRemovedCellStyle() =>
+            _modifiedRemovedCellStyle ??= CreateCellStyle(IndexedColors.Red.Index, true, true);
+
+        public ICellStyle GetModifiedAddedCellStyle() =>
+            _modifiedAddedCellStyle ??= CreateCellStyle(IndexedColors.Green.Index, false, true);
 
         public ICellStyle GetHeaderCellStyle() => 
             _headerCellStyle ??= CreateHeaderCellStyle();

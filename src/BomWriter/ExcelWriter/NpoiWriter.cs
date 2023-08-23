@@ -172,14 +172,14 @@ namespace BomWriter.ExcelWriter
             switch (comparisonResult)
             {
                 case ComparisonResult.Added:
-                    target.CellStyle = _cellStyleProvider!.GetAddedCellStyle();
+                    target.CellStyle = _cellStyleProvider!.GetModifiedAddedCellStyle();
                     break;
                 case ComparisonResult.Removed:
-                    source.CellStyle = _cellStyleProvider!.GetRemovedCellStyle();
+                    source.CellStyle = _cellStyleProvider!.GetModifiedRemovedCellStyle();
                     break;
                 case ComparisonResult.Modified:
-                    target.CellStyle = _cellStyleProvider!.GetAddedCellStyle();
-                    source.CellStyle = _cellStyleProvider!.GetRemovedCellStyle();
+                    target.CellStyle = _cellStyleProvider!.GetModifiedAddedCellStyle();
+                    source.CellStyle = _cellStyleProvider!.GetModifiedRemovedCellStyle();
                     break;
             }
         }
