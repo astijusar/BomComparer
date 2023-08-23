@@ -3,10 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 using BomComparer.Comparer;
 using BomComparer.ExcelReaders;
 using BomWriter.ExcelWriter;
+using CLI.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace CLI;
+namespace CLI.Commands;
 
 internal sealed class BomComparisonCommand : Command<BomComparisonCommand.Settings>
 {
@@ -20,8 +21,8 @@ internal sealed class BomComparisonCommand : Command<BomComparisonCommand.Settin
         [CommandArgument(0, "[targetBomPath]")]
         public string? TargetFilePath { get; set; }
 
-        [Description("Path to output the result")]
-        [CommandOption("--output")]
+        [Description("Path to output the result. Output is set to current directory by default.")]
+        [CommandOption("-o|--output")]
         public string? OutputPath { get; set; }
     }
 

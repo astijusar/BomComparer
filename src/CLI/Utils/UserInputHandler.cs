@@ -1,6 +1,6 @@
 ﻿using Spectre.Console;
 
-namespace CLI
+namespace CLI.Utils
 {
     public static class UserInputHandler
     {
@@ -32,7 +32,7 @@ namespace CLI
                 new TextPrompt<string>(label)
                     .Validate(path =>
                     {
-                        if (string.IsNullOrEmpty(path)) 
+                        if (string.IsNullOrEmpty(path))
                             return ValidationResult.Success();
 
                         if (!Directory.Exists(path))
