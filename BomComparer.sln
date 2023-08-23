@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BomComparer.Tests", "tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BomWriter", "src\BomWriter\BomWriter.csproj", "{8ECF32E2-1383-4862-A30E-B0C7B6A93D34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF", "src\WPF\WPF.csproj", "{90310D6B-3C95-4A56-A453-701FBF5C25DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF", "src\WPF\WPF.csproj", "{90310D6B-3C95-4A56-A453-701FBF5C25DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BomWriter.Tests", "tests\BomWriter.Tests\BomWriter.Tests.csproj", "{5255F0A9-A40E-48A8-A057-F5B0EBE964F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{90310D6B-3C95-4A56-A453-701FBF5C25DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90310D6B-3C95-4A56-A453-701FBF5C25DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90310D6B-3C95-4A56-A453-701FBF5C25DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5255F0A9-A40E-48A8-A057-F5B0EBE964F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5255F0A9-A40E-48A8-A057-F5B0EBE964F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5255F0A9-A40E-48A8-A057-F5B0EBE964F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5255F0A9-A40E-48A8-A057-F5B0EBE964F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

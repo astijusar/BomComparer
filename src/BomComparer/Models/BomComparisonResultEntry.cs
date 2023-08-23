@@ -10,12 +10,12 @@ public class BomComparisonResultEntry
     public ComparisonResult Status { get; set; }
 
     [ColumnOrder(2)]
-    [ColumnName("Quantity")]
-    public ComparedValues<int> Quantity { get; set; } = null!;
-
-    [ColumnOrder(3)]
     [ColumnName("Part Number")]
     public string PartNumber { get; set; } = null!;
+
+    [ColumnOrder(3)]
+    [ColumnName("Quantity")]
+    public ComparedValues<int> Quantity { get; set; } = null!;
 
     [ColumnOrder(4)]
     [ColumnName("Designators")]

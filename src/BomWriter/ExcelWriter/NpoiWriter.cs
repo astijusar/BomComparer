@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Reflection;
+﻿using System.Reflection;
 using BomComparer.Attributes;
 using BomComparer.Enums;
 using BomComparer.Exceptions;
@@ -158,10 +157,7 @@ namespace BomWriter.ExcelWriter
                         cell.SetCellValue(str);
                         break;
                     case List<DesignatorComparisonResultEntry> list:
-                        var designatorStrings = ConstructDesignatorStrings(sheet.Workbook, list);
-                        cell.SetCellValue(compResult == ComparisonResult.Removed
-                            ? designatorStrings.Item1 
-                            : designatorStrings.Item2);
+                        cell.SetCellValue(string.Join(", ", list.Select(l => l.Value)));
                         break;
                 }
             }

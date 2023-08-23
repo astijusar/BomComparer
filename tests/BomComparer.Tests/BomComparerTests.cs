@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BomComparer.Comparer;
 using BomComparer.Enums;
 using BomComparer.ExcelReaders;
 using BomComparer.Models;
 using FluentAssertions;
-using Moq;
 
 namespace BomComparer.Tests
 {
     public class BomComparerTests
     {
-        private readonly BomComparer _comparer = new();
+        private readonly BomCompare _comparer = new();
         private readonly NpoiReader _reader = new();
 
         [Fact]
