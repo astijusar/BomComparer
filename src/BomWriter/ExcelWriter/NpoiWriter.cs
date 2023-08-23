@@ -180,6 +180,12 @@ namespace BomWriter.ExcelWriter
             }
         }
 
+        /// <summary>
+        /// Constructs two designator strings for source and target rows
+        /// </summary>
+        /// <param name="workbook">Currently used workbook</param>
+        /// <param name="designators">A list of designator comparison result entries</param>
+        /// <returns>Two rich text strings. Item1 - source row designators, Item2 - target row designators</returns>
         private (XSSFRichTextString, XSSFRichTextString) ConstructDesignatorStrings(IWorkbook workbook, 
             List<DesignatorComparisonResultEntry> designators)
         {
