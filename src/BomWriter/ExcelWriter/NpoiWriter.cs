@@ -197,26 +197,18 @@ namespace BomWriter.ExcelWriter
 
             foreach (var designator in designators)
             {
+                var designatorString = designator != designators.Last() ? ", " : "";
                 switch (designator.Status)
                 {
                     case DesignatorComparisonResult.Added:
-                        target.Append(
-                            designator != designators.Last() ? $"{designator.Value}, " : $"{designator.Value}",
-                            addedFont);
+                        target.Append(designator.Value + designatorString, addedFont);
                         break;
                     case DesignatorComparisonResult.Removed:
-                        source.Append(
-                            designator != designators.Last() ? $"{designator.Value}, " : $"{designator.Value}",
-                            removedFont);
+                        source.Append(designator.Value + designatorString, removedFont);
                         break;
                     case DesignatorComparisonResult.Unchanged:
-                        source.Append(
-                            designator != designators.Last() 
-                                ? $"{designator.Value}, " 
-                                : $"{designator.Value}");
-                        target.Append(designator != designators.Last() 
-                            ? $"{designator.Value}, " 
-                            : $"{designator.Value}");
+                        source.Append(designator.Value + designatorString);
+                        target.Append(designator.Value + designatorString);
                         break;
                 }
             }
