@@ -20,10 +20,16 @@ namespace CLI
             {
                 return app.Run(args);
             }
+            catch (IOException ex)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.WriteLine("Comparison failed! Check if the source, target or result files are closed.");
+                return -1;
+            }
             catch (Exception ex)
             {
                 AnsiConsole.Clear();
-                AnsiConsole.WriteLine(ex.Message);
+                AnsiConsole.WriteLine("Unexpected error occurred!");
                 return -1;
             }
         }
