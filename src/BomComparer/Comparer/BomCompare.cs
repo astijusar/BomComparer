@@ -62,7 +62,9 @@ namespace BomComparer.Comparer
                 resultEntryProperty?.SetValue(result, comparedValuesInstance);
             }
 
-            result.Designators = CompareDesignators(source?.Designators, target?.Designators, result.Quantity);
+            result.Designators = CompareDesignators(source?.Designators, target?.Designators);
+            isRowModified = result.Designators
+                .Any(d => d.Status is DesignatorComparisonResult.Removed or DesignatorComparisonResult.Added);
 
             (result.Status, result.PartNumber) = (source, target) switch
             {
@@ -74,7 +76,7 @@ namespace BomComparer.Comparer
             return result;
         }
 
-        private List<DesignatorComparisonResultEntry> CompareDesignators(List<string>? source, List<string>? target, ComparedValues<int> quantity)
+        private List<DesignatorComparisonResultEntry> CompareDesignators(List<string>? source, List<string>? target)
         {
             if (source == null && target == null)
                 return new List<DesignatorComparisonResultEntry>();
@@ -89,66 +91,39 @@ namespace BomComparer.Comparer
                     new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, designator))
                     .ToList();
 
+            var sourceSet = new HashSet<string>(source);
+            var sourceIndex = source.Select((value, index) => new { value, index })
+                .ToDictionary(x => x.value, x => x.index);
+
             var result = new List<DesignatorComparisonResultEntry>();
 
-            int sourceIndex = 0;
-            int targetIndex = 0;
+            var targetIndex = 0;
+            var sourceIndexForAddition = 0;
 
-            while (sourceIndex < source.Count && targetIndex < target.Count)
+            while (targetIndex < target.Count)
             {
-                string sourceItem = source[sourceIndex];
-                string targetItem = target[targetIndex];
+                var targetItem = target[targetIndex];
 
-                if (sourceItem == targetItem)
+                if (sourceSet.Contains(targetItem))
                 {
-                    result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Unchanged, sourceItem));
-                    sourceIndex++;
+                    var sourceItemIndex = sourceIndex[targetItem];
+
+                    for (var i = sourceIndexForAddition; i < sourceItemIndex; i++)
+                        result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, source[i]));
+
+                    result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Unchanged, targetItem));
+                    sourceIndexForAddition = sourceItemIndex + 1;
                     targetIndex++;
                 }
                 else
                 {
-                    // Check if the targetItem is present later in the source list
-                    int nextSourceIndex = sourceIndex + 1;
-                    while (nextSourceIndex < source.Count && source[nextSourceIndex] != targetItem)
-                    {
-                        nextSourceIndex++;
-                    }
-
-                    if (nextSourceIndex < source.Count)
-                    {
-                        // Item in target is present later in source
-                        for (int i = sourceIndex; i < nextSourceIndex; i++)
-                        {
-                            result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, source[i]));
-                            sourceIndex++;
-                        }
-                    }
-                    else
-                    {
-                        // Item in target is not found in source
-                        result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, targetItem));
-                        targetIndex++;
-                    }
+                    result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, targetItem));
+                    targetIndex++;
                 }
             }
 
-            // Handle remaining items in source, if any
-            while (sourceIndex < source.Count)
-            {
-                result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, source[sourceIndex]));
-                sourceIndex++;
-            }
-
-            // Handle remaining items in target, if any
-            while (targetIndex < target.Count)
-            {
-                result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Added, target[targetIndex]));
-                targetIndex++;
-            }
-
-            if (sourceIndex == targetIndex) quantity.Status = ComparisonResult.Unchanged;
-            quantity.SourceValue = sourceIndex;
-            quantity.TargetValue = targetIndex;
+            for (var i = sourceIndexForAddition; i < source.Count; i++)
+                result.Add(new DesignatorComparisonResultEntry(DesignatorComparisonResult.Removed, source[i]));
 
             return result;
         }
