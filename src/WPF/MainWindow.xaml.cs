@@ -94,7 +94,7 @@ namespace WPF
 
                 var writer = new NpoiWriter();
                 var outputPath = Path.Combine(baseOutputPath,
-                    $"{Path.GetFileName(sourcePath)}_vs_{Path.GetFileName(targetPath)}.xlsx");
+                    $"{Path.GetFileName(sourcePath)}_vs_{Path.GetFileName(targetPath)}");
 
                 await Task.Run(() => { writer.Write(outputPath, results); });
 
