@@ -29,28 +29,85 @@
             <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2" Content="BOM Comparer" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="36"></Label>
+        <Label 
+            Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="2"
+            Content="BOM Comparer" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center" 
+            FontWeight="Bold" 
+            FontSize="36">
+        </Label>
 
         <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="10, 0">
-            <Button Command="{Binding SelectSourceFileCommand}" Content="Select Source File" HorizontalAlignment="Stretch" Height="30"></Button>
-            <TextBox Text="{Binding SourceFilePath}" HorizontalAlignment="Stretch" Height="30" Margin="0, 5" IsReadOnly="True"/>
+            <Button 
+                Command="{Binding SelectSourceFileCommand}" 
+                Content="Select Source File" 
+                HorizontalAlignment="Stretch" 
+                Height="30">
+            </Button>
+            <TextBox 
+                Text="{Binding SourceFilePath}" 
+                HorizontalAlignment="Stretch" 
+                Height="30" 
+                Margin="0, 5" 
+                IsReadOnly="True"/>
         </StackPanel>
 
         <StackPanel Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" Margin="10, 0">
-            <Button Command="{Binding SelectTargetFileCommand}" Content="Select Target File" HorizontalAlignment="Stretch" Height="30"></Button>
-            <TextBox Text="{Binding TargetFilePath}" HorizontalAlignment="Stretch" Height="30" Margin="0, 5" IsReadOnly="True"/>
+            <Button 
+                Command="{Binding SelectTargetFileCommand}" 
+                Content="Select Target File" HorizontalAlignment="Stretch" 
+                Height="30">
+            </Button>
+            <TextBox 
+                Text="{Binding TargetFilePath}" 
+                HorizontalAlignment="Stretch" 
+                Height="30" 
+                Margin="0, 5" 
+                IsReadOnly="True"/>
         </StackPanel>
 
         <StackPanel Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="10, 0">
-            <Button Command="{Binding SelectOutputDirectoryCommand}" Content="Select Output Path" HorizontalAlignment="Stretch" Height="30"></Button>
-            <TextBox Text="{Binding OutputFilePath}" HorizontalAlignment="Stretch" Height="30" Margin="0, 5" IsReadOnly="True"/>
+            <Button 
+                Command="{Binding SelectOutputDirectoryCommand}" 
+                Content="Select Output Path" 
+                HorizontalAlignment="Stretch" 
+                Height="30">
+            </Button>
+            <TextBox 
+                Text="{Binding OutputFilePath}"
+                HorizontalAlignment="Stretch" 
+                Height="30" 
+                Margin="0, 5" 
+                IsReadOnly="True"/>
         </StackPanel>
 
-        <TextBlock Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" Name="ErrorLabel" HorizontalAlignment="Center" Visibility="{Binding ErrorVisibility}" Foreground="Red" FontWeight="Bold" TextWrapping="WrapWithOverflow" Text="{Binding Error}"></TextBlock>
+        <TextBlock 
+            Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" 
+            Name="ErrorLabel" 
+            HorizontalAlignment="Center" 
+            Visibility="{Binding ErrorVisibility}" 
+            Foreground="Red" 
+            FontWeight="Bold" 
+            TextWrapping="WrapWithOverflow" 
+            Text="{Binding Error}">
+        </TextBlock>
 
-        <fa:ImageAwesome Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" Name="Spinner" Height="50" Icon="CircleOutlineNotch" Spin="True" Visibility="{Binding SpinnerVisibility}"></fa:ImageAwesome>
+        <fa:ImageAwesome 
+            Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="2" 
+            Height="50" 
+            Icon="CircleOutlineNotch" 
+            Spin="True" 
+            Visibility="{Binding SpinnerVisibility}">
+        </fa:ImageAwesome>
 
-        <Button Command="{Binding CompareCommand}" Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" Content="Compare" Height="50" IsEnabled="{Binding IsEnabled}"></Button>
+        <Button 
+            Command="{Binding CompareCommand}" 
+            Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="2" 
+            Content="Compare" 
+            Height="50" 
+            IsEnabled="{Binding IsEnabled}">
+        </Button>
 
     </Grid>
 </Window>
