@@ -63,8 +63,10 @@ namespace BomComparer.Comparer
             }
 
             result.Designators = CompareDesignators(source?.Designators, target?.Designators);
-            isRowModified = result.Designators
-                .Any(d => d.Status is DesignatorComparisonResult.Removed or DesignatorComparisonResult.Added);
+
+            if (isRowModified == false)
+                isRowModified = result.Designators
+                    .Any(d => d.Status is DesignatorComparisonResult.Removed or DesignatorComparisonResult.Added);
 
             (result.Status, result.PartNumber) = (source, target) switch
             {
