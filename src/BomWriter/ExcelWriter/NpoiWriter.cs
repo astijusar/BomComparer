@@ -42,7 +42,7 @@ namespace BomWriter.ExcelWriter
             }
 
             for (var i = 0; i < properties.Count; i++)
-                sheet.AutoSizeColumn(i + 1);
+                sheet.AutoSizeColumn(i);
 
             using var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
             workbook.Write(fileStream);
